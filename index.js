@@ -27,27 +27,36 @@ async function run() {
 
         const toyCollection = client.db('toyStore').collection('toys');
 
-        app.get('/toys', async(req, res) => {
-            const cursor = toyCollection.find();
+        app.get('/toys', async (req, res) => {
+            const cursor = toyCollection.find().limit(20);
             const result = await cursor.toArray();
             res.send(result);
         })
 
         app.get("/toys/:category", async (req, res) => {
-            const result = await toyCollection
-              .find({
-                subcategory: req.params.category,
-              })
-              .toArray();
-            res.send(result);
-          });
+            if (req.params.category == "Avengers" || req.params.category == "X-Men" || req.params.category == "GhostRider") {
+                const result = await toyCollection.find({ subcategory: req.params.category }).toArray();
+                res.send(result);
+            }
+            else {
+                const result = await toyCollection.find({}).toArray();
+                res.send(result);
+            }
+        });
 
-          app.get("/toy/:id", async (req, res) => {
+        app.get("/toy/:id", async (req, res) => {
             const result = await toyCollection.findOne({
-              _id: new ObjectId(req.params.id),
+                _id: new ObjectId(req.params.id),
             });
             res.send(result);
-          });
+        });
+
+        app.post('/toys', async(req, res) => {
+            const added = req.body;
+            console.log(added);
+            const result = await toyCollection.insertOne(added);
+            res.send(result);
+        })
 
 
         // Send a ping to confirm a successful connection

@@ -42,12 +42,6 @@ async function run() {
             res.send(result);
           });
 
-          app.get("/toy/:id", async (req, res) => {
-            const result = await toyCollection.findOne({
-              _id: new ObjectId(req.params.id),
-            });
-            res.send(result);
-          });
 
 
         // Send a ping to confirm a successful connection

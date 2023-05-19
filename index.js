@@ -51,7 +51,7 @@ async function run() {
             res.send(result);
         });
 
-        app.post('/toys', async(req, res) => {
+        app.post('/toys', async (req, res) => {
             const added = req.body;
             console.log(added);
             const result = await toyCollection.insertOne(added);
@@ -59,18 +59,28 @@ async function run() {
         })
 
         app.get("/mytoys/:email", async (req, res) => {
-            console.log(req.params.id);
+            console.log(req.params.email);
             const jobs = await toyCollection
-              .find({
-                email: req.params.email,
-              })
-              .toArray();
+                .find({
+                    email: req.params.email,
+                }).sort({price: 1})
+                .toArray();
             res.send(jobs);
-          });
+        });
 
-        app.delete('/mytoys/:id', async(req, res) => {
+        app.get("/searchtoy/:text", async (req, res) => {
+            const text = req.params.text;
+            const result = await toyCollection
+                .find({
+                    name: { $regex: text, $options: "i" }
+                })
+                .toArray();
+            res.send(result);
+        });
+
+        app.delete('/mytoys/:id', async (req, res) => {
             const id = req.params.id;
-            const query = { _id : new ObjectId(id) };
+            const query = { _id: new ObjectId(id) };
             const result = await toyCollection.deleteOne(query);
             res.send(result);
         })

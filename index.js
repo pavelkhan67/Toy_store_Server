@@ -67,11 +67,12 @@ async function run() {
         })
 
         app.get("/mytoys/:email", async (req, res) => {
-            console.log(req.params.email);
+            console.log(req.query.sort);
+            const sort = req.query.sort;
             const jobs = await toyCollection
                 .find({
                     email: req.params.email,
-                }).sort({ price: 1 })
+                }).sort({ "price": sort === 'asc' ? 1 : -1 }).collation({locale:"en_US", numericOrdering:true})
                 .toArray();
             res.send(jobs);
         });
